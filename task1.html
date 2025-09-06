@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Responsive Landing Page</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      background: whitesmoke;
+    }
+
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: transparent;
+      padding: 15px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: 0.3s ease;
+      z-index: 1000;
+    }
+
+    nav.scrolled {
+      background: burlywood;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    nav .logo {
+      color: white;
+      font-size: 22px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 25px;
+    }
+
+    nav ul li {
+      display: inline-block;
+    }
+
+    nav ul li a {
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+      transition: 0.3s;
+      padding: 6px 10px;
+      border-radius: 5px;
+    }
+
+    nav ul li a:hover {
+      background: lightseagreen;
+      color: white;
+    }
+
+    .hero {
+      height: 100vh;
+      background: url("https://picsum.photos/1600/900") no-repeat center center/cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: black;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .hero h1 {
+      font-size: 48px;
+      margin-bottom: 20px;
+    }
+
+    .hero p {
+      font-size: 20px;
+    }
+
+    section {
+      padding: 80px 40px;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    section:nth-child(even) {
+      background: #fff;
+    }
+
+    section:nth-child(odd) {
+      background: #eee;
+    }
+
+    /* 🔹 Active section styling */
+    .active-section {
+      background: black !important;
+      color: white !important;
+    }
+
+    .active-section h2,
+    .active-section p {
+      color: white !important;
+    }
+
+    @media (max-width: 768px) {
+      nav ul {
+        flex-direction: column;
+        background: black;
+        position: absolute;
+        top: 60px;
+        right: 0;
+        width: 200px;
+        display: none;
+        text-align: right;
+        padding: 15px;
+      }
+
+      nav ul.show {
+        display: block;
+      }
+
+      nav .menu-toggle {
+        display: block;
+        color: white;
+        font-size: 26px;
+        cursor: pointer;
+      }
+    }
+
+    @media (min-width: 769px) {
+      nav .menu-toggle {
+        display: none;
+      }
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+  </style>
+</head>
+<body>
+
+  <nav id="navbar">
+    <div class="logo">SkillCraft</div>
+    <div class="menu-toggle">&#9776;</div>
+    <ul id="menu">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <div class="hero" id="home">
+    <div>
+      <h1>Welcome to SkillCraft</h1>
+      <p>Building Responsive Landing Pages with Ease</p>
+    </div>
+  </div>
+
+  <section id="about">
+    <h2>About Us</h2>
+    <p>
+      Domain: IT solutions, web development, and e-learning platforms.<br><br>
+      Mission: To equip learners and freshers with practical skills by giving them real-world website development tasks.<br><br>
+      Style of Work: Assigns small, practical projects (HTML, CSS, JavaScript).
+    </p>
+  </section>
+
+  <section id="services">
+    <h2>Our Services</h2>
+    <p>
+      Internship Programs, Hands-on Project Based Learning, and Supportive Ecosystem.
+    </p>
+  </section>
+
+  <section id="contact">
+    <h2>Contact Us</h2>
+    <p>Get in touch via email at contact@skillcraft.com or call us at +91-1234567890.</p>
+  </section>
+
+  <script>
+    
+    window.addEventListener("scroll", function () {
+      const navbar = document.getElementById("navbar");
+      navbar.classList.toggle("scrolled", window.scrollY > 50);
+    });
+
+    const menuToggle = document.querySelector(".menu-toggle");
+    const menu = document.getElementById("menu");
+    menuToggle.addEventListener("click", () => {
+      menu.classList.toggle("show");
+    });
+
+    
+    const links = document.querySelectorAll("nav ul li a");
+    const sections = document.querySelectorAll("section, .hero");
+
+    links.forEach(link => {
+      link.addEventListener("click", function () {
+        
+        sections.forEach(sec => sec.classList.remove("active-section"));
+
+        
+        const targetId = this.getAttribute("href").substring(1);
+        const targetSection = document.getElementById(targetId);
+
+        
+        if (targetId !== "home" && targetSection) {
+          targetSection.classList.add("active-section");
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
