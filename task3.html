@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tic-Tac-Toe</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); 
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .container {
+      display: flex;
+      gap: 40px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 150px);
+      grid-template-rows: repeat(3, 150px);
+      gap: 15px;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      backdrop-filter: blur(6px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .cell {
+      width: 150px;
+      height: 150px;
+      background: linear-gradient(145deg, #3b6978, #204051);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 60px;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 12px;
+      transition: 0.3s;
+      box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.2);
+    }
+
+    .cell:hover {
+      background: linear-gradient(145deg, #4a7c8c, #1f3c47);
+      transform: scale(1.05);
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
+    }
+
+    .sidebar {
+      background: rgba(255, 255, 255, 0.08);
+      padding: 25px;
+      border-radius: 16px;
+      width: 280px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(6px);
+    }
+
+    h1 {
+      color: #ffca28; 
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .sidebar p,
+    .sidebar h3,
+    .sidebar label {
+      margin: 10px 0;
+    }
+
+    select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      margin-bottom: 15px;
+      font-weight: bold;
+      font-size: 1rem;
+      background: #3c4f76;
+      color: #fff;
+      outline: none;
+    }
+
+    .button {
+      width: 100%;
+      background: linear-gradient(90deg, #ff512f, #dd2476); 
+      border: none;
+      padding: 12px;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+      color: #fff;
+      transition: 0.3s;
+      font-size: 1rem;
+      letter-spacing: 1px;
+    }
+
+    .button:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+    }
+
+    .score {
+      margin-top: 20px;
+      padding: 10px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    #turn {
+      margin-top: 15px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #00e676;
+      text-align: center;
+    }
+
+    @media (max-width: 768px) {
+      .board {
+        grid-template-columns: repeat(3, 100px);
+        grid-template-rows: repeat(3, 100px);
+      }
+      .cell {
+        width: 100px;
+        height: 100px;
+        font-size: 40px;
+      }
+      .sidebar {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .board {
+        grid-template-columns: repeat(3, 80px);
+        grid-template-rows: repeat(3, 80px);
+        gap: 10px;
+      }
+      .cell {
+        width: 80px;
+        height: 80px;
+        font-size: 30px;
+      }
+      h1 {
+        font-size: 1.4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div>
+      <h1>✨ Tic-Tac-Toe</h1>
+      <div class="board" id="board">
+        <div class="cell" data-index="0"></div>
+        <div class="cell" data-index="1"></div>
+        <div class="cell" data-index="2"></div>
+        <div class="cell" data-index="3"></div>
+        <div class="cell" data-index="4"></div>
+        <div class="cell" data-index="5"></div>
+        <div class="cell" data-index="6"></div>
+        <div class="cell" data-index="7"></div>
+        <div class="cell" data-index="8"></div>
+      </div>
+    </div>
+
+    <div class="sidebar">
+      <h3>⚙️ Game Settings</h3>
+      <label for="mode">Mode:</label>
+      <select id="mode">
+        <option value="cpu">Player vs Computer</option>
+        <option value="pvp">Player vs Player</option>
+      </select>
+
+      <label for="difficulty">Difficulty:</label>
+      <select id="difficulty">
+        <option value="easy">Easy</option>
+        <option value="unbeatable" selected>Unbeatable</option>
+      </select>
+
+      <button class="button" onclick="newRound()">🔄 New Round</button>
+      <button class="button" onclick="resetScores()">🗑 Reset Scores</button>
+
+      <div class="score">
+        <p>❌ X Wins: <span id="xWins">0</span></p>
+        <p>⭕ O Wins: <span id="oWins">0</span></p>
+        <p>🤝 Draws: <span id="draws">0</span></p>
+      </div>
+      <p id="turn">X to move</p>
+    </div>
+  </div>
+
+  <script>
+    const cells = document.querySelectorAll(".cell");
+    const turnText = document.getElementById("turn");
+    const xWinsDisplay = document.getElementById("xWins");
+    const oWinsDisplay = document.getElementById("oWins");
+    const drawsDisplay = document.getElementById("draws");
+    const modeSelect = document.getElementById("mode");
+    const difficultySelect = document.getElementById("difficulty");
+
+    let board = ["", "", "", "", "", "", "", "", ""];
+    let currentPlayer = "X";
+    let gameActive = true;
+    let scores = { X: 0, O: 0, Draws: 0 };
+
+    const winPatterns = [
+      [0,1,2],[3,4,5],[6,7,8],
+      [0,3,6],[1,4,7],[2,5,8],
+      [0,4,8],[2,4,6]
+    ];
+
+    // Handle Player Move
+    cells.forEach(cell => {
+      cell.addEventListener("click", () => {
+        const index = cell.getAttribute("data-index");
+        if (board[index] !== "" || !gameActive) return;
+        makeMove(index, currentPlayer);
+        if (gameActive && modeSelect.value === "cpu" && currentPlayer === "O") {
+          setTimeout(computerMove, 500);
+        }
+      });
+    });
+
+    function makeMove(index, player) {
+      board[index] = player;
+      cells[index].textContent = player;
+      cells[index].style.color = (player === "X") ? "#ffca28" : "#00e5ff"; // X = Yellow, O = Cyan
+
+      if (checkWin(player)) {
+        gameActive = false;
+        scores[player]++;
+        updateScores();
+        turnText.textContent = player + " Wins! 🎉";
+        turnText.style.color = (player === "X") ? "#ffca28" : "#00e5ff";
+        return;
+      }
+
+      if (board.every(cell => cell !== "")) {
+        gameActive = false;
+        scores.Draws++;
+        updateScores();
+        turnText.textContent = "It's a Draw! 🤝";
+        turnText.style.color = "#e0e0e0";
+        return;
+      }
+
+      currentPlayer = player === "X" ? "O" : "X";
+      turnText.textContent = currentPlayer + " to move";
+      turnText.style.color = "#00e676";
+    }
+
+    function checkWin(player) {
+      return winPatterns.some(pattern =>
+        pattern.every(index => board[index] === player)
+      );
+    }
+
+    function computerMove() {
+      let move;
+      if (difficultySelect.value === "easy") {
+        move = randomMove();
+      } else {
+        move = bestMove();
+      }
+      makeMove(move, "O");
+    }
+
+    function randomMove() {
+      let empty = board.map((val, i) => val === "" ? i : null).filter(v => v !== null);
+      return empty[Math.floor(Math.random() * empty.length)];
+    }
+
+    function bestMove() {
+      let bestScore = -Infinity;
+      let move;
+      for (let i = 0; i < 9; i++) {
+        if (board[i] === "") {
+          board[i] = "O";
+          let score = minimax(board, 0, false);
+          board[i] = "";
+          if (score > bestScore) {
+            bestScore = score;
+            move = i;
+          }
+        }
+      }
+      return move;
+    }
+
+    function minimax(board, depth, isMaximizing) {
+      if (checkWin("O")) return 10 - depth;
+      if (checkWin("X")) return depth - 10;
+      if (board.every(cell => cell !== "")) return 0;
+
+      if (isMaximizing) {
+        let bestScore = -Infinity;
+        for (let i = 0; i < 9; i++) {
+          if (board[i] === "") {
+            board[i] = "O";
+            let score = minimax(board, depth + 1, false);
+            board[i] = "";
+            bestScore = Math.max(score, bestScore);
+          }
+        }
+        return bestScore;
+      } else {
+        let bestScore = Infinity;
+        for (let i = 0; i < 9; i++) {
+          if (board[i] === "") {
+            board[i] = "X";
+            let score = minimax(board, depth + 1, true);
+            board[i] = "";
+            bestScore = Math.min(score, bestScore);
+          }
+        }
+        return bestScore;
+      }
+    }
+
+    function updateScores() {
+      xWinsDisplay.textContent = scores.X;
+      oWinsDisplay.textContent = scores.O;
+      drawsDisplay.textContent = scores.Draws;
+    }
+
+    function newRound() {
+      board = ["", "", "", "", "", "", "", "", ""];
+      cells.forEach(cell => {
+        cell.textContent = "";
+        cell.style.color = "#fff";
+      });
+      currentPlayer = "X";
+      gameActive = true;
+      turnText.textContent = "X to move";
+      turnText.style.color = "#00e676";
+    }
+
+    function resetScores() {
+      scores = { X: 0, O: 0, Draws: 0 };
+      updateScores();
+      newRound();
+    }
+  </script>
+</body>
+</html>
