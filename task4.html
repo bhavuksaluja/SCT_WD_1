@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>To-Do Web App</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-1: #f9fafb;
+      --bg-2: #e0f7fa;
+      --glass: rgba(255, 255, 255, 0.75);
+      --glass-2: rgba(255, 255, 255, 0.9);
+      --text: #222;
+      --muted: #555;
+      --brand: #06b6d4;   /* teal */
+      --brand-2: #8b5cf6; /* purple */
+      --green: #22c55e;
+      --red: #ef4444;
+      --shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font: 16px/1.4 "Inter", sans-serif;
+      color: var(--text);
+      background: linear-gradient(135deg, var(--bg-1), var(--bg-2));
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px;
+    }
+
+    header.landing {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    header.landing h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 0;
+    }
+    header.landing p {
+      color: var(--muted);
+      font-size: 1.1rem;
+      margin-top: 8px;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 20px;
+      padding: 28px;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .glass {
+      background: var(--glass);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      backdrop-filter: blur(12px);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    /* Sidebar */
+    .sidebar { padding: 20px; display: flex; flex-direction: column; }
+    .logo { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+    .logo h1 { margin: 0; font-weight: 800; color: var(--brand); }
+    .logo-dot {
+      width: 12px; height: 12px; border-radius: 50%;
+      background: conic-gradient(from 180deg, var(--brand) 0 60%, var(--brand-2) 60%);
+      box-shadow: 0 0 10px var(--brand);
+    }
+    .lists-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .lists { list-style: none; padding: 0; margin: 0; flex: 1; overflow: auto; }
+    .lists li {
+      padding: 12px 14px;
+      margin: 6px 0;
+      border-radius: 14px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--muted);
+      transition: 0.2s;
+    }
+    .lists li:hover { background: var(--glass-2); color: var(--text); }
+    .lists li.active {
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      color: #fff;
+      font-weight: 600;
+    }
+    .list-actions { display: flex; gap: 10px; margin-top: 14px; }
+
+    /* Main */
+    .main { padding: 24px; display: flex; flex-direction: column; }
+    .main-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    #activeListTitle { margin: 0; font-size: 24px; font-weight: 700; }
+    .now { color: var(--muted); font-size: 14px; }
+
+    .task-form {
+      display: grid;
+      grid-template-columns: 1fr 150px 120px auto;
+      gap: 10px;
+      margin: 14px 0 18px;
+    }
+    .task-form input {
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 12px;
+      color: var(--text);
+      padding: 12px;
+      outline: none;
+    }
+
+    .tasks { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+    .task {
+      display: grid;
+      grid-template-columns: 34px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 12px;
+      border-radius: 14px;
+      background: #fff;
+      border: 1px solid #eee;
+    }
+    .checkbox {
+      width: 22px; height: 22px; border-radius: 6px;
+      border: 2px solid var(--brand); display: grid; place-items: center;
+      cursor: pointer;
+    }
+    .checkbox.checked {
+      background: linear-gradient(135deg, var(--green), #17a34a);
+      border-color: transparent;
+    }
+    .checkbox svg { width: 16px; height: 16px; opacity: 0; }
+    .checkbox.checked svg { opacity: 1; }
+    .task-title { font-weight: 600; }
+    .task.done .task-title { text-decoration: line-through; color: var(--muted); }
+    .meta { color: var(--muted); font-size: 12px; margin-top: 2px; }
+    .actions { display: flex; gap: 8px; }
+    .icon-btn {
+      width: 32px; height: 32px;
+      display: grid; place-items: center;
+      border-radius: 10px;
+      background: #f1f1f1;
+      cursor: pointer;
+    }
+    .icon-btn:hover { background: #e0e0e0; }
+    .icon-btn.danger:hover { color: var(--red); }
+
+    .btn {
+      border: none;
+      background: #f1f1f1;
+      color: var(--text);
+      border-radius: 12px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      color: #fff;
+    }
+    .btn-danger { color: var(--red); background: #ffe6e6; }
+
+    .empty-state {
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+      margin-top: 20px;
+    }
+
+    .footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      padding: 12px;
+      margin-top: 40px;
+    }
+
+    @media(max-width:900px){
+      .app{grid-template-columns:1fr;}
+      .sidebar{order:2}
+      .main{order:1}
+    }
+  </style>
+</head>
+<body>
+  <header class="landing">
+    <h1>✨ Welcome to Your To-Do App</h1>
+    <p>Stay organized, set deadlines, and boost productivity.</p>
+  </header>
+
+  <div class="app">
+    <aside class="sidebar glass">
+      <div class="logo"><span class="logo-dot"></span><h1>To-Do</h1></div>
+      <div class="lists-header">
+        <h2>Lists</h2><button id="newListBtn" class="btn btn-primary">+</button>
+      </div>
+      <ul id="lists" class="lists"></ul>
+      <div class="list-actions">
+        <button id="renameListBtn" class="btn">Rename</button>
+        <button id="deleteListBtn" class="btn btn-danger">Delete</button>
+      </div>
+    </aside>
+
+    <main class="main glass">
+      <header class="main-header">
+        <h2 id="activeListTitle">Tasks</h2><div class="now" id="now"></div>
+      </header>
+      <form id="taskForm" class="task-form">
+        <input id="taskText" type="text" placeholder="New task..." required />
+        <input id="taskDate" type="date" /><input id="taskTime" type="time" />
+        <button class="btn btn-primary" type="submit">Add</button>
+      </form>
+      <ul id="tasks" class="tasks"></ul>
+      <div id="empty" class="empty-state"><p>No tasks yet.</p></div>
+    </main>
+  </div>
+
+  <footer class="footer">🌟 Built with Love — To-Do Web App</footer>
+
+  <script>
+    const STORAGE_KEY="todo_webapp_v1";
+    const listsEl=document.getElementById("lists"),
+          tasksEl=document.getElementById("tasks"),
+          taskForm=document.getElementById("taskForm"),
+          taskText=document.getElementById("taskText"),
+          taskDate=document.getElementById("taskDate"),
+          taskTime=document.getElementById("taskTime"),
+          activeListTitle=document.getElementById("activeListTitle"),
+          emptyEl=document.getElementById("empty"),
+          nowEl=document.getElementById("now");
+
+    let state=JSON.parse(localStorage.getItem(STORAGE_KEY))||{
+      lists:[{id:Date.now()+"",name:"My List",tasks:[]}],
+      selected:null
+    };
+    state.selected=state.selected||state.lists[0].id;
+
+    function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}
+    function activeList(){return state.lists.find(l=>l.id===state.selected)}
+
+    function renderLists(){
+      listsEl.innerHTML="";
+      state.lists.forEach(l=>{
+        const li=document.createElement("li");
+        li.textContent=l.name;
+        if(l.id===state.selected) li.classList.add("active");
+        li.onclick=()=>{state.selected=l.id;save();render()};
+        listsEl.appendChild(li);
+      });
+    }
+
+    function renderTasks(){
+      const list=activeList();
+      activeListTitle.textContent=list?list.name:"Tasks";
+      tasksEl.innerHTML="";
+      if(!list||list.tasks.length===0){emptyEl.style.display="block";return}
+      emptyEl.style.display="none";
+
+      list.tasks.forEach(t=>{
+        const li=document.createElement("li");
+        li.className="task";
+        if(t.done) li.classList.add("done");
+
+        const cb=document.createElement("div");
+        cb.className="checkbox"+(t.done?" checked":"");
+        cb.innerHTML='<svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="white" stroke-width="3" fill="none"/></svg>';
+        cb.onclick=()=>{t.done=!t.done;save();render()};
+
+        const info=document.createElement("div");
+        info.innerHTML='<div class="task-title">'+t.text+'</div>'+
+          (t.date||t.time?'<div class="meta">'+(t.date||"")+" "+(t.time||"")+'</div>':"");
+
+        const actions=document.createElement("div");
+        actions.className="actions";
+        const del=document.createElement("button");
+        del.className="icon-btn danger";
+        del.innerHTML="🗑";
+        del.onclick=()=>{list.tasks=list.tasks.filter(x=>x!=t);save();render()};
+        actions.appendChild(del);
+
+        li.appendChild(cb);
+        li.appendChild(info);
+        li.appendChild(actions);
+        tasksEl.appendChild(li);
+      });
+    }
+
+    function render(){
+      renderLists();
+      renderTasks();
+      nowEl.textContent=new Date().toLocaleString()
+    }
+
+    taskForm.onsubmit=e=>{
+      e.preventDefault();
+      const list=activeList();
+      list.tasks.push({
+        text:taskText.value,
+        date:taskDate.value,
+        time:taskTime.value,
+        done:false
+      });
+      taskText.value="";taskDate.value="";taskTime.value="";
+      save();render();
+    }
+
+    document.getElementById("newListBtn").onclick=()=>{
+      const name=prompt("List name");
+      if(name){
+        state.lists.push({id:Date.now()+"",name,tasks:[]});
+        state.selected=state.lists[state.lists.length-1].id;
+        save();render()
+      }
+    }
+
+    document.getElementById("renameListBtn").onclick=()=>{
+      const l=activeList();
+      if(l){
+        const n=prompt("Rename",l.name);
+        if(n){l.name=n;save();render()}
+      }
+    }
+
+    document.getElementById("deleteListBtn").onclick=()=>{
+      const l=activeList();
+      if(l&&confirm("Delete list?")){
+        state.lists=state.lists.filter(x=>x!=l);
+        state.selected=state.lists[0]?.id||null;
+        save();render()
+      }
+    }
+
+    render();
+  </script>
+</body>
+</html>
